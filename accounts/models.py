@@ -14,14 +14,14 @@ from .managers import UserManager
 
 class User(AbstractBaseUser):
 	phone_number = models.CharField(max_length=11, unique=True)
-	username = models.CharField(max_length=100)
+	username = models.CharField(max_length=100,unique=True)
 	is_active = models.BooleanField(default=True)
 	is_admin = models.BooleanField(default=False)
 
 	objects = UserManager()
 
 	USERNAME_FIELD = 'phone_number'
-	REQUIRED_FIELDS = ['phone_number', 'username']
+	REQUIRED_FIELDS = [ 'username',]
 
 	def __str__(self):
 		return self.username
@@ -29,15 +29,16 @@ class User(AbstractBaseUser):
 	@property
 	def is_staff(self):
 		return self.is_admin
+    
+	# def has_
 
+class OtpCode(models.Model):
+	phone_number = models.CharField(max_length=11, unique=True)
+	code = models.PositiveSmallIntegerField()
+	created = models.DateTimeField(auto_now=True)
 
-# class OtpCode(models.Model):
-# 	phone_number = models.CharField(max_length=11, unique=True)
-# 	code = models.PositiveSmallIntegerField()
-# 	created = models.DateTimeField(auto_now=True)
-
-	# def __str__(self):
-	# 	return f'{self.phone_number} - {self.code} - {self.created}'
+	def __str__(self):
+		return f'{self.phone_number} - {self.code} - {self.created}'
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)

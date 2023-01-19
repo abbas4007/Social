@@ -10,12 +10,12 @@ class UserRegistrationForm(forms.Form):
 	password1 = forms.CharField(label='password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
 	password2 = forms.CharField(label='confirm password', widget=forms.PasswordInput(attrs={'class':'form-control'}))
 
-	def clean_phone_number(self):
-		phone_number = self.cleaned_data['phone_number']
-		user = User.objects.filter(phone_number=phone_number).exists()
-		if user:
-			raise ValidationError('this phone_number already existing')
-		return phone_number
+	# def clean_phone_number(self):
+	# 	phone_number = self.cleaned_data['phone_number']
+	# 	user = User.objects.filter(phone_number=phone_number).exists()
+	# 	if user:
+	# 		raise ValidationError('this phone_number already existing')
+	# 	return phone_number
 
 	def clean(self):
 		cd=super().clean()
@@ -24,6 +24,13 @@ class UserRegistrationForm(forms.Form):
 
 		if p1 and p2 and p1 != p2:
 			raise ValidationError('password must match')
+    
+	def save(self, commit=True):
+		user = super().save(commit=False)
+		user.set_password(self.cleaned_data['password1'])
+		if commit:
+			user.save()
+		return user
 
 
 class UserLoginForm(forms.Form):
